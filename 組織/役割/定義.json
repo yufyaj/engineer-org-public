@@ -1,9 +1,5 @@
 [
   {
-    "name": "org-tl",
-    "source": ".claude/agents/org-tl.md"
-  },
-  {
     "name": "org-backend",
     "source": ".claude/agents/org-backend.md"
   },

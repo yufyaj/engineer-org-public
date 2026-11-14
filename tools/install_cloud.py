@@ -47,7 +47,7 @@ def install(root, config):
             raise ValueError('Existing configuration differs: ' + str(target))
     # Retire only references previously installed from this checkout.
     removals = []
-    for relative in ('agents/org-support.md', 'skills/org-fable-consult'):
+    for relative in ('agents/org-support.md', 'agents/org-tl.md', 'skills/org-fable-consult'):
         retired = config / relative
         if not (retired.is_symlink() or retired.exists()):
             continue
