@@ -28,10 +28,6 @@
     "source": ".claude/agents/org-designer.md"
   },
   {
-    "name": "org-support",
-    "source": ".claude/agents/org-support.md"
-  },
-  {
     "name": "org-monitor",
     "source": ".claude/agents/org-monitor.md"
   }
