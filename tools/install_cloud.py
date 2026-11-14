@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).absolute().parent.parent
@@ -21,7 +22,13 @@ def install(root, config):
         if not name.startswith('org-') or '/' in name or '\\' in name:
             raise ValueError('Invalid role name')
         links[config / 'agents' / (name + '.md')] = root / '.claude/agents' / (name + '.md')
-    # Only a pointer is written here. Rule and role bodies stay in the Git checkout.
+    skills = sorted((root / '.claude/skills').glob('org-*/SKILL.md'))
+    for definition in skills:
+        name = definition.parent.name
+        if not re.fullmatch(r'org-[a-z0-9]+(?:-[a-z0-9]+)*', name):
+            raise ValueError('Invalid skill name')
+        links[config / 'skills' / name] = definition.parent
+    # Only pointers are written here. Rule, role and skill bodies stay in Git.
     entry = config / 'CLAUDE.md'
     content = (MARKER + '\n@' + str(root / 'AGENTS.md') + '\n\n'
                + '組織の起点は `' + str(root) + '`。組織の指示にある相対パスはこの起点から解決する。\n')
@@ -38,13 +45,13 @@ def install(root, config):
                 raise ValueError('Existing link differs: ' + str(target))
         elif target.exists():
             raise ValueError('Existing configuration differs: ' + str(target))
-    (config / 'agents').mkdir(parents=True, exist_ok=True)
     for target, source in links.items():
+        target.parent.mkdir(parents=True, exist_ok=True)
         if not target.is_symlink():
             target.symlink_to(source, target_is_directory=source.is_dir())
     if not entry.exists():
         entry.write_text(content)
-    print('engineer-org: canonical checkout referenced; ' + str(len(roles)) + ' roles linked')
+    print('engineer-org: canonical checkout referenced; ' + str(len(roles)) + ' roles and ' + str(len(skills)) + ' skills linked')
 
 
 if __name__ == '__main__':
