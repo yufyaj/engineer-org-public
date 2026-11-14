@@ -1,0 +1,34 @@
+[
+  {
+    "name": "org-tl",
+    "source": ".claude/agents/org-tl.md"
+  },
+  {
+    "name": "org-backend",
+    "source": ".claude/agents/org-backend.md"
+  },
+  {
+    "name": "org-frontend",
+    "source": ".claude/agents/org-frontend.md"
+  },
+  {
+    "name": "org-qa",
+    "source": ".claude/agents/org-qa.md"
+  },
+  {
+    "name": "org-security",
+    "source": ".claude/agents/org-security.md"
+  },
+  {
+    "name": "org-infra",
+    "source": ".claude/agents/org-infra.md"
+  },
+  {
+    "name": "org-designer",
+    "source": ".claude/agents/org-designer.md"
+  },
+  {
+    "name": "org-support",
+    "source": ".claude/agents/org-support.md"
+  }
+]
