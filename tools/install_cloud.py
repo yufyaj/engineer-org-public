@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).absolute().parent.parent
+if ROOT.name == '共通' and (ROOT.parent / 'AGENTS.md').is_file():
+    ROOT = ROOT.parent
 MARKER = '<!-- engineer-org: reference only -->'
 
 
@@ -15,14 +17,15 @@ def install(root, config):
     config = Path(os.path.abspath(config))
     if any(p.is_symlink() for p in [config, *config.parents]):
         raise ValueError('Refusing a symlink in configuration directory')
-    roles = json.loads((root / '組織/役割/定義.json').read_text())
+    shared = root / '共通' if (root / '共通/組織/役割/定義.json').is_file() else root
+    roles = json.loads((shared / '組織/役割/定義.json').read_text())
     links = {config / 'engineer-org': root}
     for role in roles:
         name = role['name']
         if not name.startswith('org-') or '/' in name or '\\' in name:
             raise ValueError('Invalid role name')
-        links[config / 'agents' / (name + '.md')] = root / '.claude/agents' / (name + '.md')
-    skills = sorted((root / '.claude/skills').glob('org-*/SKILL.md'))
+        links[config / 'agents' / (name + '.md')] = shared / '.claude/agents' / (name + '.md')
+    skills = sorted((shared / '.claude/skills').glob('org-*/SKILL.md'))
     for definition in skills:
         name = definition.parent.name
         if not re.fullmatch(r'org-[a-z0-9]+(?:-[a-z0-9]+)*', name):
