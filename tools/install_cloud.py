@@ -46,16 +46,19 @@ def install(root, config):
         elif target.exists():
             raise ValueError('Existing configuration differs: ' + str(target))
     # Retire only references previously installed from this checkout.
-    retired = config / 'agents/org-support.md'
-    remove_retired = retired.is_symlink() or retired.exists()
-    if remove_retired:
-        owned = {(root / '.claude/agents/org-support.md').resolve(),
-                 (root / '共通/.claude/agents/org-support.md').resolve()}
+    removals = []
+    for relative in ('agents/org-support.md', 'skills/org-fable-consult'):
+        retired = config / relative
+        if not (retired.is_symlink() or retired.exists()):
+            continue
+        owned = {(root / '.claude' / relative).resolve(),
+                 (root / '共通/.claude' / relative).resolve()}
         if any(p.is_symlink() for p in retired.parents):
             raise ValueError('Invalid parent of retired role: ' + str(retired))
         if not retired.is_symlink() or retired.resolve() not in owned:
-            raise ValueError('Existing retired role differs; preserve and resolve explicitly: ' + str(retired))
-    if remove_retired:
+            raise ValueError('Existing retired configuration differs; preserve and resolve explicitly: ' + str(retired))
+        removals.append(retired)
+    for retired in removals:
         retired.unlink()
     for target, source in links.items():
         target.parent.mkdir(parents=True, exist_ok=True)
